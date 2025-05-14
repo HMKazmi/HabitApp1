@@ -50,9 +50,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildHabitList() {
     return Consumer<HabitViewModel>(
       builder: (context, viewModel, child) {
-        final todayHabits = viewModel.getTodayHabits();
+        // Use getAllHabits instead of getTodayHabits to show all habits
+        final allHabits = viewModel.habits;
 
-        if (todayHabits.isEmpty) {
+        if (allHabits.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'No habits to track today',
+                  'No habits to track yet',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 10),
@@ -78,15 +79,16 @@ class _HomeScreenState extends State<HomeScreen> {
         }
 
         return ListView.builder(
-          itemCount: todayHabits.length,
+          itemCount: allHabits.length,
           itemBuilder: (context, index) {
-            final habit = todayHabits[index];
+            final habit = allHabits[index];
             return _buildHabitTile(context, habit, viewModel);
           },
         );
       },
     );
   }
+
 
   Widget _buildHabitTile(BuildContext context, Habit habit, HabitViewModel viewModel) {
     return Card(
@@ -104,10 +106,16 @@ class _HomeScreenState extends State<HomeScreen> {
               : TextDecoration.none,
           ),
         ),
-        subtitle: LinearProgressIndicator(
-          value: habit.getWeeklyProgress(),
-          backgroundColor: habit.color.withOpacity(0.2),
-          valueColor: AlwaysStoppedAnimation<Color>(habit.color),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(habit.frequency.toString()),
+            LinearProgressIndicator(
+              value: habit.getWeeklyProgress(),
+              backgroundColor: habit.color.withOpacity(0.2),
+              valueColor: AlwaysStoppedAnimation<Color>(habit.color),
+            ),
+          ],
         ),
         trailing: Checkbox(
           value: habit.isCompletedToday(),
@@ -186,6 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) => AddHabitScreen(existingHabit: habit),
     );
   }
+
 
   Widget _buildBottomNavigationBar() {
     return BottomNavigationBar(

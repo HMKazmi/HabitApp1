@@ -66,6 +66,18 @@ class Habit {
         return today.weekday < 6; // Monday to Friday
       case HabitFrequency.specific:
         return selectedDays.contains(today.weekday);
+      case HabitFrequency.weekly:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case HabitFrequency.monthly:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case HabitFrequency.weekends:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case HabitFrequency.custom:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 
@@ -88,7 +100,7 @@ enum HabitFrequency {
   @HiveField(1)
   weekdays,
   @HiveField(2)
-  specific
+  specific, weekly, monthly, weekends, custom
 }
 
 @HiveType(typeId: 2)

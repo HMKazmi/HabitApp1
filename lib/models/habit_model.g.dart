@@ -141,6 +141,18 @@ class HabitFrequencyAdapter extends TypeAdapter<HabitFrequency> {
       case HabitFrequency.specific:
         writer.writeByte(2);
         break;
+      case HabitFrequency.weekly:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case HabitFrequency.monthly:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case HabitFrequency.weekends:
+        // TODO: Handle this case.
+        throw UnimplementedError();
+      case HabitFrequency.custom:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
   }
 

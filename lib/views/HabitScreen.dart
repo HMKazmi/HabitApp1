@@ -41,7 +41,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
     _nameController = TextEditingController(
       text: widget.existingHabit?.name ?? '',
     );
-    
+
     if (widget.existingHabit != null) {
       _selectedFrequency = widget.existingHabit!.frequency;
       _selectedColor = widget.existingHabit!.color;
@@ -65,30 +65,22 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
 
     final viewModel = Provider.of<HabitViewModel>(context, listen: false);
 
+    final newHabit = Habit(
+      id: widget.existingHabit?.id ?? DateTime.now().millisecondsSinceEpoch.toString(), // Generate a unique ID if new
+      name: _nameController.text.trim(),
+      color: _selectedColor,
+      frequency: _selectedFrequency,
+      selectedDays: _selectedFrequency == HabitFrequency.specific ? _selectedDays : [],
+      createdAt: widget.existingHabit?.createdAt ?? DateTime.now(),
+      completions: widget.existingHabit?.completions ?? [],
+    );
+
     if (widget.existingHabit != null) {
       // Update existing habit
-      final updatedHabit = Habit(
-        id: widget.existingHabit!.id,
-        name: _nameController.text.trim(),
-        color: _selectedColor,
-        frequency: _selectedFrequency,
-        selectedDays: _selectedFrequency == HabitFrequency.specific 
-          ? _selectedDays 
-          : [],
-        createdAt: widget.existingHabit!.createdAt,
-        completions: widget.existingHabit!.completions,
-      );
-      viewModel.updateHabit(updatedHabit);
+      viewModel.updateHabit(newHabit);
     } else {
       // Add new habit
-      viewModel.addHabit(
-        name: _nameController.text.trim(),
-        color: _selectedColor,
-        frequency: _selectedFrequency,
-        selectedDays: _selectedFrequency == HabitFrequency.specific 
-          ? _selectedDays 
-          : [],
-      );
+      viewModel.addHabit(newHabit, name: newHabit.name, color: newHabit.color);
     }
 
     Navigator.pop(context);
@@ -114,7 +106,7 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            
+
             // Habit Name Input
             TextField(
               controller: _nameController,
@@ -255,6 +247,14 @@ class _AddHabitScreenState extends State<AddHabitScreen> {
         return 'Weekdays';
       case HabitFrequency.specific:
         return 'Specific Days';
+      case HabitFrequency.weekly:
+        return 'Weekly';
+      case HabitFrequency.monthly:
+        return 'Monthly';
+      case HabitFrequency.weekends:
+        return 'Weekends';
+      case HabitFrequency.custom:
+        return 'Custom';
     }
   }
-} 
+}
