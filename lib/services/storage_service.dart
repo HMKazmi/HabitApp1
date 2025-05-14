@@ -5,15 +5,28 @@ import '../models/habit_model.dart';
 class HabitStorageService {
   static const String _habitsBoxName = 'habits_box';
   late Box<Habit> _habitsBox;
+  static bool _adaptersRegistered = false;
 
   Future<void> init() async {
-    await Hive.initFlutter();
+    // Skip the initialization of Hive and adapter registration
+    // since it's already done in main.dart
     
-    // Register adapters
-    Hive.registerAdapter(HabitAdapter());
-    Hive.registerAdapter(HabitFrequencyAdapter());
-    Hive.registerAdapter(HabitCompletionAdapter());
+    // Only register adapters if they haven't been registered already
+    if (!_adaptersRegistered) {
+      try {
+        // Register adapters
+        Hive.registerAdapter(HabitAdapter());
+        Hive.registerAdapter(HabitFrequencyAdapter());
+        Hive.registerAdapter(HabitCompletionAdapter());
+        _adaptersRegistered = true;
+      } catch (e) {
+        // Adapters are already registered, that's fine
+        print('Adapters already registered: $e');
+        _adaptersRegistered = true;
+      }
+    }
 
+    // Just open the box
     _habitsBox = await Hive.openBox<Habit>(_habitsBoxName);
   }
 

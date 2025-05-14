@@ -1,12 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:habit_app1/models/color_adapter.dart';
+import 'package:habit_app1/models/habit_model.dart';
 import 'package:habit_app1/views/HomeScreen.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'viewmodels/habit_viewmodel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  runApp( 
+  // Initialize Hive
+  await Hive.initFlutter();
+  
+  // Register all adapters in one place (main.dart)
+  try {
+    // Register the new ColorAdapter
+    Hive.registerAdapter(ColorAdapter());
+    
+    // Register your model adapters
+    Hive.registerAdapter(HabitAdapter());
+    Hive.registerAdapter(HabitFrequencyAdapter());
+    Hive.registerAdapter(HabitCompletionAdapter());
+  } catch (e) {
+    // This will catch any "adapter already registered" errors
+    print('Error registering adapters: $e');
+  }
+  
+  // For data recovery if needed
+  try {
+    // If the box exists and may have corrupted data
+    if (await Hive.boxExists('habits_box')) {
+      // Open the box with recovery mode
+      await Hive.openBox<Habit>('habits_box');
+      // If recovery is needed, handle it manually
+      print('Box opened successfully. Handle recovery logic if necessary.');
+    }
+  } catch (e) {
+    print('Error during recovery: $e');
+  }
+  
+  runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(

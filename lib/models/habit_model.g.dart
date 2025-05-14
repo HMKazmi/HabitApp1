@@ -6,6 +6,8 @@ part of 'habit_model.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
+// Update the HabitAdapter in habit_model.g.dart
+
 class HabitAdapter extends TypeAdapter<Habit> {
   @override
   final int typeId = 0;
@@ -16,10 +18,24 @@ class HabitAdapter extends TypeAdapter<Habit> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
+    
+    // Handle color properly by converting int to Color
+    dynamic colorValue = fields[2];
+    Color color;
+    
+    if (colorValue is Color) {
+      color = colorValue;
+    } else if (colorValue is int) {
+      color = Color(colorValue);
+    } else {
+      // Default color if conversion fails
+      color = Colors.blue;
+    }
+    
     return Habit(
       id: fields[0] as String,
       name: fields[1] as String,
-      color: fields[2] as Color,
+      color: color,
       frequency: fields[3] as HabitFrequency,
       selectedDays: (fields[4] as List).cast<int>(),
       createdAt: fields[5] as DateTime?,
@@ -36,7 +52,7 @@ class HabitAdapter extends TypeAdapter<Habit> {
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.color)
+      ..write(obj.color.value) // Store the color as an integer value
       ..writeByte(3)
       ..write(obj.frequency)
       ..writeByte(4)

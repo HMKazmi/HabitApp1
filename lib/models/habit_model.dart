@@ -68,6 +68,17 @@ class Habit {
         return selectedDays.contains(today.weekday);
     }
   }
+
+  // Add a method to handle integer to Color conversion for backward compatibility
+  static Color intToColor(dynamic colorValue) {
+    if (colorValue is Color) {
+      return colorValue;
+    } else if (colorValue is int) {
+      return Color(colorValue);
+    }
+    // Default color if conversion fails
+    return Colors.blue;
+  }
 }
 
 @HiveType(typeId: 1)
